@@ -17,6 +17,8 @@ var finish_screen : PackedScene = preload("res://menu/level_finished.tscn")
 func _ready() -> void:
 	player = AudioStreamPlayer.new()
 	add_child(player)
+	var background : PackedScene = load("res://background.tscn")
+	get_parent().call_deferred("add_child",background.instance())
 
 
 func _process(delta: float) -> void:
