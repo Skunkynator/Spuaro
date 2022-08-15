@@ -8,7 +8,8 @@ script/source = "extends Control
 
 var lvl_button : PackedScene = preload(\"res://menu/level_button.tscn\")
 var main_menu : PackedScene = preload(\"res://menu/main.tscn\")
-var main_path := \"./levels/\"
+var main_path := \"res://levels/\"
+var leaderboard_set := true
 
 
 func _ready() -> void:
@@ -43,11 +44,15 @@ func diff_sorter(diff_a, diff_b):
 
 
 func _level_play_clicked(level : Dictionary, path : String) -> void:
+	if not leaderboard_set:
+		return
+	leaderboard_set = false
 	$\"%name_lbl\".text = String(level.name) if \"name\" in level else \"\"
 	$\"%author_lbl\".text = String(level.author) if \"author\" in level else \"\"
 	$\"%bpm_lbl\".text = String(level.bpm) if \"bpm\" in level else \"\"
 	if \"difficulties\" in level:
 		(level.difficulties as Array).sort_custom(self,\"diff_sorter\")
+		_set_leaderboards(level.name, level.difficulties[0].name)
 		var diff_list := $\"%difficulty_list\"
 		var diff_button : Button
 		for child in diff_list.get_children():
@@ -60,10 +65,13 @@ func _level_play_clicked(level : Dictionary, path : String) -> void:
 			diff_list.add_child(diff_button)
 			diff_button.connect(\"pressed\",self,\"queue_free\")
 			diff_button.connect(\"pressed\",LevelController,\"open_level\",
-					[path.plus_file(difficulty.level), path.plus_file(level.music)])
+					[path.plus_file(difficulty.level), path.plus_file(level.music),
+					level.name,difficulty.name])
 
 
 func back() -> void:
+	if not leaderboard_set:
+		return
 	get_parent().add_child(main_menu.instance())
 	queue_free()
 
@@ -71,6 +79,24 @@ func back() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(\"ui_cancel\"):
 		back()
+
+
+func _set_leaderboards(name : String, difficulty : String):
+	LootLocker.get_leaderboard_top_10(name, difficulty)
+	var board = yield(LootLocker,\"got_leaderboard\")
+	var board_txt := \"\"
+	for member in board:
+		board_txt += String(member.ran) + \" \" + member.name
+		board_txt += \": \" + String(member.score) + \"\\n\"
+	$\"%top_leaderboard\".text = board_txt
+	board_txt = \"\"
+	LootLocker.get_leaderboard_around(name, difficulty,5)
+	board = yield(LootLocker,\"got_leaderboard\")
+	for member in board:
+		board_txt += String(member.ran) + \" \" + member.name
+		board_txt += \": \" + String(member.score) + \"\\n\"
+	$\"%around_leaderboard\".text = board_txt
+	leaderboard_set = true
 "
 
 [node name="Control" type="Control"]
@@ -163,6 +189,37 @@ margin_top = 154.0
 margin_right = 1056.0
 margin_bottom = 654.0
 rect_min_size = Vector2( 0, 500 )
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/Scores"]
+margin_right = 122.0
+margin_bottom = 32.0
+theme_type_variation = "SmallLabel"
+text = "Top 10:"
+
+[node name="Label2" type="Label" parent="PanelContainer/VBoxContainer/Scores"]
+anchor_left = 0.5
+anchor_right = 0.5
+margin_right = 122.0
+margin_bottom = 32.0
+theme_type_variation = "SmallLabel"
+text = "Around You:"
+
+[node name="around_leaderboard" type="Label" parent="PanelContainer/VBoxContainer/Scores"]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.1
+anchor_right = 0.5
+anchor_bottom = 0.1
+margin_right = 122.0
+margin_bottom = 32.0
+theme_type_variation = "SmallLabel"
+
+[node name="top_leaderboard" type="Label" parent="PanelContainer/VBoxContainer/Scores"]
+unique_name_in_owner = true
+anchor_top = 0.1
+anchor_bottom = 0.1
+margin_right = 122.0
+theme_type_variation = "SmallLabel"
 
 [node name="scroll" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
 margin_top = 658.0
