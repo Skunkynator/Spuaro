@@ -35,7 +35,7 @@ func _ready():
 
 func authenticate_user(identifier) -> void:
 	# Make a dictionary with our data
-	var data := { "game_key": game_API_key, "game_version": "0.1", "development_mode": true }
+	var data := { "game_key": game_API_key, "game_version": "0.1", "development_mode": false }
 	
 	# If identifier is given, add it to data
 	if identifier is String:
@@ -83,6 +83,7 @@ func _get_user_name() -> void:
 
 func _on_get_user_name_request_completed(result, response_code, headers, body) -> void:
 	var json = JSON.parse(body.get_string_from_utf8())
+	print_debug(body.get_string_from_utf8())
 	user_name = json.result.name
 	get_name_http.queue_free()
 	# Inform the game that we got a user name back
@@ -158,7 +159,7 @@ func get_leaderboard_range(level : String, difficulty : String, from : int, to :
 func get_leaderboard_around(level : String, difficulty : String, radius : int) -> void:
 	get_score(level, difficulty)
 	var score_info = yield(self, "got_score")
-	var start = max(score_info.rank - radius, 0)
+	var start = max(score_info.rank - radius, 1)
 	_get_leaderboard(level, difficulty, start-1, 2*radius+1)
 
 
@@ -167,6 +168,7 @@ func _get_leaderboard(level : String, difficulty : String, start : int, count : 
 	var url := "https://api.lootlocker.io/game/leaderboards/"+leaderboard_id+"/list?count="+str(count)+"&after="+str(start)
 	var headers = ["Content-Type: application/json", "x-session-token:"+session_token]
 	
+	print_debug(var2str(url))
 	# Create a request node for getting the leaderboard data
 	get_leaderboard_http = HTTPRequest.new()
 	add_child(get_leaderboard_http)

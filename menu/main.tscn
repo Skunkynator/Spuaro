@@ -18,6 +18,8 @@ func _ready() -> void:
 	popup = $\"%popup\"
 	name_popup = $AcceptDialog
 	LootLocker.connect(\"user_name_found\",self,\"_name_got\")
+	if LootLocker.user_name:
+		name_got = true
 
 
 func _name_got(name : String):
@@ -136,15 +138,15 @@ margin_right = 809.0
 margin_bottom = 337.0
 popup_exclusive = true
 
-[node name="TextEdit" type="LineEdit" parent="AcceptDialog"]
+[node name="NameIn" type="LineEdit" parent="AcceptDialog"]
+unique_name_in_owner = true
 anchor_top = 0.3
 anchor_right = 1.0
 anchor_bottom = 0.6
 text = "..."
 align = 1
 
-[node name="NameIn" type="Label" parent="AcceptDialog"]
-unique_name_in_owner = true
+[node name="label" type="Label" parent="AcceptDialog"]
 anchor_top = 0.1
 anchor_right = 1.0
 anchor_bottom = 0.1

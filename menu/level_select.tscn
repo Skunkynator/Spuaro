@@ -86,14 +86,14 @@ func _set_leaderboards(name : String, difficulty : String):
 	var board = yield(LootLocker,\"got_leaderboard\")
 	var board_txt := \"\"
 	for member in board:
-		board_txt += String(member.ran) + \" \" + member.name
+		board_txt += String(member.rank) + \" \" + member.name
 		board_txt += \": \" + String(member.score) + \"\\n\"
 	$\"%top_leaderboard\".text = board_txt
 	board_txt = \"\"
 	LootLocker.get_leaderboard_around(name, difficulty,5)
 	board = yield(LootLocker,\"got_leaderboard\")
 	for member in board:
-		board_txt += String(member.ran) + \" \" + member.name
+		board_txt += String(member.rank) + \" \" + member.name
 		board_txt += \": \" + String(member.score) + \"\\n\"
 	$\"%around_leaderboard\".text = board_txt
 	leaderboard_set = true
