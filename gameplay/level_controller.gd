@@ -19,9 +19,12 @@ func _ready() -> void:
 	add_child(player)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if level:
-		time = player.get_playback_position() - level.start
+		if player.playing:
+			time = player.get_playback_position() - level.start
+		else:
+			time += delta
 
 
 func open_level(level_path : String, song_path : String) -> void:
@@ -50,14 +53,19 @@ func play_level(audio : AudioStream = null) -> void:
 	bps = level.bpm / 60.0
 	if audio:
 		player.stream = audio
-	player.play(level.start)
-	player.volume_db = 0.0
 	add_child(left_bh)
 	add_child(right_bh)
 	add_child(game_ui)
 	game_ui.update_ui()
 	left_bh.spawn(level.lnotes)
 	right_bh.spawn(level.rnotes)
+	time = 0
+	if level.start < 0.0:
+		yield(get_tree().create_timer(-level.start),"timeout")
+		player.play()
+	else:
+		player.play(level.start)
+	player.volume_db = 0.0
 	yield(left_bh,"did_finish")
 	if not right_bh.finished:
 		yield(right_bh,"did_finish")
@@ -73,6 +81,7 @@ func finish_level():
 	get_parent().add_child(finish_screen.instance())
 	remove_child(left_bh)
 	remove_child(right_bh)
+	remove_child(game_ui)
 
 
 func note_hit(mode):
