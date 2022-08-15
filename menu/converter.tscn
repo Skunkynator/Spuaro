@@ -1,0 +1,87 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://theme/orbitron_small.tres" type="DynamicFont" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+
+var main_menu : PackedScene = load(\"res://menu/main.tscn\")
+
+
+func back() -> void:
+	get_parent().add_child(main_menu.instance())
+	queue_free()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_cancel\"):
+		back()
+
+
+func _on_Convert_pressed() -> void:
+	var beats : PoolStringArray = $input.text.replace(\"\\n;\",\"\").split(\"\\n,\\n\")
+	var cur_beat := 0
+	var lnotes := []
+	var rnotes := []
+	for beat in beats:
+		var notes := (beat as String).split(\"\\n\")
+		var incrementer := 4.0 / notes.size()
+		var cur_partial := 0.0
+		for note in notes:
+			for i in note.length():
+				if note[i] == '1':
+					if i < note.length() / 2:
+						lnotes.append(cur_beat + cur_partial)
+					else:
+						rnotes.append(cur_beat + cur_partial)
+			cur_partial += incrementer
+		cur_beat += 4
+	$output.text = var2str({\"lnotes\": lnotes, \"rnotes\": rnotes})
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_pivot_offset = Vector2( 0, 23 )
+script = SubResource( 1 )
+
+[node name="input" type="TextEdit" parent="."]
+anchor_left = 0.05
+anchor_top = 0.1
+anchor_right = 0.4
+anchor_bottom = 0.9
+custom_fonts/font = ExtResource( 1 )
+text = "Insert sm notes here"
+
+[node name="output" type="TextEdit" parent="."]
+anchor_left = 0.6
+anchor_top = 0.1
+anchor_right = 0.96
+anchor_bottom = 0.9
+custom_fonts/font = ExtResource( 1 )
+text = "Result
+"
+
+[node name="Button" type="Button" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -165.0
+margin_top = -47.0
+margin_right = 165.0
+margin_bottom = 47.0
+text = "Convert"
+
+[node name="Button2" type="Button" parent="."]
+anchor_left = 0.01
+anchor_top = 0.016
+anchor_right = 0.01
+anchor_bottom = 0.016
+margin_right = 40.0
+margin_bottom = 94.0
+text = "<-"
+
+[connection signal="pressed" from="Button" to="." method="_on_Convert_pressed"]
+[connection signal="pressed" from="Button2" to="." method="back"]

@@ -9,6 +9,7 @@ script/source = "extends Control
 var exit_dialog : Control
 var popup : ConfirmationDialog
 var select_scene : PackedScene = load(\"res://menu/level_select.tscn\")
+var converter : PackedScene = preload(\"res://menu/converter.tscn\")
 
 
 func _ready() -> void:
@@ -32,6 +33,11 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(\"ui_cancel\") and not popup.visible:
 		toggle_exit()
 		get_tree().set_input_as_handled()
+
+
+func go_to_converter() -> void:
+	get_parent().add_child(converter.instance())
+	queue_free()
 "
 
 [node name="Control" type="Control"]
@@ -58,27 +64,35 @@ alignment = 1
 
 [node name="Button" type="Button" parent="VBoxContainer"]
 margin_left = 837.0
-margin_top = 233.0
+margin_top = 184.0
 margin_right = 1083.0
-margin_bottom = 327.0
+margin_bottom = 278.0
 size_flags_horizontal = 4
 text = "PLAY"
 
 [node name="Button2" type="Button" parent="VBoxContainer"]
 margin_left = 806.0
-margin_top = 331.0
+margin_top = 282.0
 margin_right = 1113.0
-margin_bottom = 425.0
+margin_bottom = 376.0
 size_flags_horizontal = 4
 text = "Options"
 
 [node name="Button3" type="Button" parent="VBoxContainer"]
 margin_left = 874.0
-margin_top = 429.0
+margin_top = 380.0
 margin_right = 1046.0
-margin_bottom = 523.0
+margin_bottom = 474.0
 size_flags_horizontal = 4
 text = "Exit"
+
+[node name="Button4" type="Button" parent="VBoxContainer"]
+margin_left = 757.0
+margin_top = 478.0
+margin_right = 1163.0
+margin_bottom = 572.0
+size_flags_horizontal = 4
+text = "Converter"
 
 [node name="popup" type="ConfirmationDialog" parent="."]
 unique_name_in_owner = true
@@ -94,4 +108,5 @@ dialog_text = "Exit the game?"
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="level_select"]
 [connection signal="pressed" from="VBoxContainer/Button3" to="." method="toggle_exit"]
+[connection signal="pressed" from="VBoxContainer/Button4" to="." method="go_to_converter"]
 [connection signal="confirmed" from="popup" to="." method="exit_game"]
