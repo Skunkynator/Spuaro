@@ -10,23 +10,44 @@ var exit_dialog : Control
 var popup : ConfirmationDialog
 var select_scene : PackedScene = load(\"res://menu/level_select.tscn\")
 var converter : PackedScene = preload(\"res://menu/converter.tscn\")
+var name_popup : Popup
+var name_got := false
 
 
 func _ready() -> void:
 	popup = $\"%popup\"
+	name_popup = $AcceptDialog
+	LootLocker.connect(\"user_name_found\",self,\"_name_got\")
+
+
+func _name_got(name : String):
+	if name == \"\":
+		name_popup.popup_centered()
+	else:
+		name_got = true
+
+
+func _name_btn_pressed():
+	var name : String = $\"%NameIn\".text
+	if not name == \"\":
+		LootLocker.set_user_name(name)
+		name_popup.visible = false
+		name_got = true
 
 
 func toggle_exit() -> void:
-	popup.popup_centered()
+	if name_got:
+		popup.popup_centered()
 
 
 func exit_game() -> void:
-	get_tree().quit()
+		get_tree().quit()
 
 
 func level_select() -> void:
-	get_parent().add_child(select_scene.instance())
-	queue_free()
+	if name_got:
+		get_parent().add_child(select_scene.instance())
+		queue_free()
 
 
 func _input(event: InputEvent) -> void:
@@ -36,8 +57,9 @@ func _input(event: InputEvent) -> void:
 
 
 func go_to_converter() -> void:
-	get_parent().add_child(converter.instance())
-	queue_free()
+	if not name_got:
+		get_parent().add_child(converter.instance())
+		queue_free()
 "
 
 [node name="Control" type="Control"]
@@ -104,9 +126,44 @@ margin_left = -267.5
 margin_top = -91.0
 margin_right = 267.5
 margin_bottom = 91.0
+rect_min_size = Vector2( 150, 52.5 )
 dialog_text = "Exit the game?"
+
+[node name="AcceptDialog" type="PopupDialog" parent="."]
+margin_left = 188.0
+margin_top = 55.0
+margin_right = 809.0
+margin_bottom = 337.0
+popup_exclusive = true
+
+[node name="TextEdit" type="LineEdit" parent="AcceptDialog"]
+anchor_top = 0.3
+anchor_right = 1.0
+anchor_bottom = 0.6
+text = "..."
+align = 1
+
+[node name="NameIn" type="Label" parent="AcceptDialog"]
+unique_name_in_owner = true
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.1
+margin_bottom = 64.0
+text = "Enter Name"
+align = 1
+
+[node name="Button" type="Button" parent="AcceptDialog"]
+anchor_left = 0.5
+anchor_top = 0.9
+anchor_right = 0.5
+anchor_bottom = 0.9
+margin_left = -72.0
+margin_top = -94.0
+margin_right = 72.0
+text = "OK"
 
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="level_select"]
 [connection signal="pressed" from="VBoxContainer/Button3" to="." method="toggle_exit"]
 [connection signal="pressed" from="VBoxContainer/Button4" to="." method="go_to_converter"]
 [connection signal="confirmed" from="popup" to="." method="exit_game"]
+[connection signal="pressed" from="AcceptDialog/Button" to="." method="_name_btn_pressed"]
