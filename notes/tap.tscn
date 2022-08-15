@@ -1,0 +1,28 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://sdf_2d.gdshader" type="Shader" id=1]
+[ext_resource path="res://circle_SDF.png" type="Texture" id=2]
+[ext_resource path="res://notes/tap.gd" type="Script" id=3]
+
+[sub_resource type="Gradient" id=1]
+interpolation_mode = 1
+offsets = PoolRealArray( 0, 0.2, 0.3 )
+colors = PoolColorArray( 1, 0, 0, 0, 1, 0, 0, 1, 0.498039, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = ExtResource( 1 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 2 )
+
+[node name="Node2D" type="Node2D"]
+z_index = -1
+script = ExtResource( 3 )
+
+[node name="Visual" type="Sprite" parent="."]
+material = SubResource( 3 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
