@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://sdf_2d.gdshader" type="Shader" id=1]
+[ext_resource path="res://gameplay/black_hole_base.tscn" type="PackedScene" id=2]
+
+[sub_resource type="Gradient" id=1]
+offsets = PoolRealArray( 0, 0.178295, 0.337209, 0.50969, 0.525194 )
+colors = PoolColorArray( 0, 0, 0, 0, 0.6875, 0, 1, 0, 1, 0, 0, 0.784314, 1, 0.937255, 0, 1, 0, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=2]
+gradient = SubResource( 1 )
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = ExtResource( 1 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 2 )
+
+[node name="BHR" instance=ExtResource( 2 )]
+material = SubResource( 6 )
+position = Vector2( 1440, 540 )
+max_angle = 3.142
+type = 1

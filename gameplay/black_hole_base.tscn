@@ -1,0 +1,133 @@
+[gd_scene load_steps=17 format=2]
+
+[ext_resource path="res://gameplay/spawner.gd" type="Script" id=1]
+[ext_resource path="res://notes/tap.tscn" type="PackedScene" id=2]
+[ext_resource path="res://circle_SDF.png" type="Texture" id=3]
+[ext_resource path="res://sdf_2d.gdshader" type="Shader" id=4]
+
+[sub_resource type="Gradient" id=2]
+offsets = PoolRealArray( 0.636872, 0.949721, 1 )
+colors = PoolColorArray( 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1 )
+
+[sub_resource type="GradientTexture" id=3]
+gradient = SubResource( 2 )
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 4 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 3 )
+
+[sub_resource type="Gradient" id=5]
+offsets = PoolRealArray( 0.636872, 0.949721, 1 )
+colors = PoolColorArray( 1, 0.501961, 0, 0, 1, 0.501961, 0, 1, 1, 0.494118, 0, 1 )
+
+[sub_resource type="GradientTexture" id=6]
+gradient = SubResource( 5 )
+
+[sub_resource type="ShaderMaterial" id=7]
+shader = ExtResource( 4 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 6 )
+
+[sub_resource type="Gradient" id=8]
+offsets = PoolRealArray( 0.636872, 0.949721, 1 )
+colors = PoolColorArray( 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1 )
+
+[sub_resource type="GradientTexture" id=9]
+gradient = SubResource( 8 )
+
+[sub_resource type="ShaderMaterial" id=10]
+shader = ExtResource( 4 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 9 )
+
+[sub_resource type="Gradient" id=11]
+offsets = PoolRealArray( 0.636872, 0.949721, 1 )
+colors = PoolColorArray( 0, 1, 0.882812, 0, 0, 1, 0.835938, 1, 0, 1, 0.90625, 1 )
+
+[sub_resource type="GradientTexture" id=12]
+gradient = SubResource( 11 )
+
+[sub_resource type="ShaderMaterial" id=13]
+shader = ExtResource( 4 )
+shader_param/lowest = 0.0
+shader_param/highest = 1.0
+shader_param/gradient = SubResource( 12 )
+
+[node name="Node2D" type="Node2D"]
+z_index = 1
+script = ExtResource( 1 )
+note_scene = ExtResource( 2 )
+type = 2
+
+[node name="BH" type="Sprite" parent="."]
+use_parent_material = true
+scale = Vector2( 8, 8 )
+texture = ExtResource( 3 )
+
+[node name="MissParticles" type="CPUParticles2D" parent="."]
+material = SubResource( 4 )
+emitting = false
+amount = 100
+lifetime = 0.5
+lifetime_randomness = 0.5
+texture = ExtResource( 3 )
+emission_shape = 1
+emission_sphere_radius = 32.0
+direction = Vector2( 1000, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+scale_amount = 2.0
+scale_amount_random = 1.0
+
+[node name="OkParticles" type="CPUParticles2D" parent="."]
+material = SubResource( 7 )
+emitting = false
+amount = 100
+lifetime = 0.5
+lifetime_randomness = 0.5
+texture = ExtResource( 3 )
+emission_shape = 1
+emission_sphere_radius = 32.0
+direction = Vector2( 1000, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+scale_amount = 2.0
+scale_amount_random = 1.0
+
+[node name="GoodParticles" type="CPUParticles2D" parent="."]
+material = SubResource( 10 )
+emitting = false
+amount = 100
+lifetime = 0.5
+lifetime_randomness = 0.5
+texture = ExtResource( 3 )
+emission_shape = 1
+emission_sphere_radius = 32.0
+direction = Vector2( 1000, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+scale_amount = 2.0
+scale_amount_random = 1.0
+
+[node name="PerfectParticles" type="CPUParticles2D" parent="."]
+material = SubResource( 13 )
+emitting = false
+amount = 100
+lifetime = 0.5
+lifetime_randomness = 0.5
+texture = ExtResource( 3 )
+emission_shape = 1
+emission_sphere_radius = 32.0
+direction = Vector2( 1000, 0 )
+spread = 180.0
+gravity = Vector2( 0, 0 )
+initial_velocity = 100.0
+scale_amount = 2.0
+scale_amount_random = 1.0
