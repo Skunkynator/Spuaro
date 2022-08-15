@@ -19,9 +19,6 @@ shader_param/gradient = SubResource( 5 )
 
 [node name="BHL" instance=ExtResource( 1 )]
 material = SubResource( 6 )
-position = Vector2( 480, 540 )
+position = Vector2( 640, 540 )
 min_angle = -3.142
 type = 0
-
-[node name="Particles2D" parent="." index="1"]
-emitting = true
