@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+
+func update_ui() -> void:
+	$ScoreLabel.text = String(LevelController.score)
+	$ComboLabel.text = String(LevelController.combo)
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="ScoreTxt" type="Label" parent="."]
+anchor_left = 0.02
+anchor_top = 0.03
+anchor_right = 0.02
+anchor_bottom = 0.03
+margin_left = -0.399998
+margin_top = -0.399998
+margin_right = 113.6
+margin_bottom = 31.6
+theme_type_variation = "SmallLabel"
+text = "Score:"
+
+[node name="ScoreLabel" type="Label" parent="."]
+anchor_left = 0.02
+anchor_top = 0.03
+anchor_right = 0.02
+anchor_bottom = 0.03
+margin_left = 113.6
+margin_top = -0.399998
+margin_right = 126.6
+margin_bottom = 31.6
+theme_type_variation = "SmallLabel"
+text = "3"
+
+[node name="ComboTxt" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -68.0
+margin_top = -33.0
+margin_right = 69.0
+margin_bottom = -1.0
+grow_horizontal = 2
+theme_type_variation = "SmallLabel"
+text = "COMBO"
+align = 1
+valign = 1
+
+[node name="ComboLabel" type="Label" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -68.0
+margin_top = 2.0
+margin_right = 69.0
+margin_bottom = 34.0
+grow_horizontal = 2
+grow_vertical = 0
+rect_pivot_offset = Vector2( 68, 34 )
+theme_type_variation = "SmallLabel"
+text = "10000"
+align = 1
