@@ -8,6 +8,8 @@ var score : int
 var combo : int
 var level : Dictionary
 var player : AudioStreamPlayer
+var lvl_name : String
+var lvl_diff : String
 var left_bh := preload("res://gameplay/black_hole_left.tscn").instance() as Spawner
 var right_bh := preload("res://gameplay/black_hole_right.tscn").instance() as Spawner
 var game_ui : Control = preload("res://gameplay/game_ui.tscn").instance()
@@ -29,8 +31,10 @@ func _process(delta: float) -> void:
 			time += delta
 
 
-func open_level(level_path : String, song_path : String) -> void:
+func open_level(level_path : String, song_path : String, l_name : String, diff : String) -> void:
 	var file := File.new()
+	lvl_name = l_name
+	lvl_diff = diff
 	if file.open(level_path,File.READ):
 		file.close()
 		return
@@ -73,7 +77,7 @@ func play_level(audio : AudioStream = null) -> void:
 		yield(right_bh,"did_finish")
 	var tween := create_tween()
 	tween.tween_property(player,"volume_db",-50.0,4).set_trans(Tween.TRANS_EXPO)
-	
+	LootLocker.upload_score(lvl_name,lvl_diff,score)
 	yield(get_tree().create_timer(4),"timeout")
 	finish_level()
 
