@@ -1,0 +1,97 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://theme/main.tres" type="Theme" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+
+var exit_dialog : Control
+var popup : ConfirmationDialog
+var select_scene : PackedScene = load(\"res://menu/level_select.tscn\")
+
+
+func _ready() -> void:
+	popup = $\"%popup\"
+
+
+func toggle_exit() -> void:
+	popup.popup_centered()
+
+
+func exit_game() -> void:
+	get_tree().quit()
+
+
+func level_select() -> void:
+	get_parent().add_child(select_scene.instance())
+	queue_free()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_cancel\") and not popup.visible:
+		toggle_exit()
+		get_tree().set_input_as_handled()
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 0.3
+grow_horizontal = 2
+rect_pivot_offset = Vector2( 21.5, 7 )
+theme_type_variation = "BigLabel"
+text = "Spuaro"
+align = 1
+valign = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_top = 0.3
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="Button" type="Button" parent="VBoxContainer"]
+margin_left = 837.0
+margin_top = 233.0
+margin_right = 1083.0
+margin_bottom = 327.0
+size_flags_horizontal = 4
+text = "PLAY"
+
+[node name="Button2" type="Button" parent="VBoxContainer"]
+margin_left = 806.0
+margin_top = 331.0
+margin_right = 1113.0
+margin_bottom = 425.0
+size_flags_horizontal = 4
+text = "Options"
+
+[node name="Button3" type="Button" parent="VBoxContainer"]
+margin_left = 874.0
+margin_top = 429.0
+margin_right = 1046.0
+margin_bottom = 523.0
+size_flags_horizontal = 4
+text = "Exit"
+
+[node name="popup" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -267.5
+margin_top = -91.0
+margin_right = 267.5
+margin_bottom = 91.0
+dialog_text = "Exit the game?"
+
+[connection signal="pressed" from="VBoxContainer/Button" to="." method="level_select"]
+[connection signal="pressed" from="VBoxContainer/Button3" to="." method="toggle_exit"]
+[connection signal="confirmed" from="popup" to="." method="exit_game"]

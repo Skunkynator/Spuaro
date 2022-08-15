@@ -1,0 +1,6 @@
+[gd_scene format=2]
+
+[node name="Button" type="Button"]
+margin_right = 40.0
+margin_bottom = 94.0
+theme_type_variation = "SongButton"

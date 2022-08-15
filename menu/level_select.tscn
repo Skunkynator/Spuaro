@@ -1,0 +1,203 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://theme/main.tres" type="Theme" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+
+var lvl_button : PackedScene = preload(\"res://menu/level_button.tscn\")
+var main_menu : PackedScene = preload(\"res://menu/main.tscn\")
+var main_path := \"./levels/\"
+
+
+func _ready() -> void:
+	var level_dir := Directory.new()
+	if level_dir.open(main_path) == OK:
+		level_dir.list_dir_begin(true)
+		var current := level_dir.get_next()
+		var info_file := File.new()
+		var first := true
+		while current != \"\":
+			if level_dir.current_is_dir():
+				current = main_path.plus_file(current)
+				if not info_file.open(current.plus_file(\"info.dat\"),File.READ):
+					var level = str2var(info_file.get_as_text())
+					add_level_btn(level,current)
+					if first:
+						_level_play_clicked(level,current)
+						first = false
+				info_file.close()
+			current = level_dir.get_next()
+
+
+func add_level_btn(info : Dictionary, path : String):
+	var button : Button = lvl_button.instance()
+	button.text = info.name
+	button.connect(\"pressed\",self,\"_level_play_clicked\",[info,path])
+	$\"%level_list\".add_child(button)
+
+
+func diff_sorter(diff_a, diff_b):
+	return diff_a.stars < diff_b.stars
+
+
+func _level_play_clicked(level : Dictionary, path : String) -> void:
+	$\"%name_lbl\".text = String(level.name) if \"name\" in level else \"\"
+	$\"%author_lbl\".text = String(level.author) if \"author\" in level else \"\"
+	$\"%bpm_lbl\".text = String(level.bpm) if \"bpm\" in level else \"\"
+	if \"difficulties\" in level:
+		(level.difficulties as Array).sort_custom(self,\"diff_sorter\")
+		var diff_list := $\"%difficulty_list\"
+		var diff_button : Button
+		for child in diff_list.get_children():
+			diff_list.remove_child(child)
+			child.free()
+		for difficulty in level.difficulties:
+			diff_button = lvl_button.instance()
+			diff_button.size_flags_vertical = SIZE_SHRINK_CENTER
+			diff_button.text = String(difficulty.stars) + \"* \" + difficulty.name
+			diff_list.add_child(diff_button)
+			diff_button.connect(\"pressed\",self,\"queue_free\")
+			diff_button.connect(\"pressed\",LevelController,\"open_level\",
+					[path.plus_file(difficulty.level), path.plus_file(level.music)])
+
+
+func back() -> void:
+	get_parent().add_child(main_menu.instance())
+	queue_free()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_cancel\"):
+		back()
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+script = SubResource( 1 )
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchor_left = 0.05
+anchor_top = 0.1
+anchor_right = 0.6
+anchor_bottom = 0.9
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+margin_right = 1056.0
+margin_bottom = 874.0
+
+[node name="SongInfo" type="Control" parent="PanelContainer/VBoxContainer"]
+margin_right = 1056.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 0, 150 )
+
+[node name="name_lbl" type="Label" parent="PanelContainer/VBoxContainer/SongInfo"]
+unique_name_in_owner = true
+anchor_left = 0.03
+anchor_top = 0.2
+anchor_right = 0.03
+anchor_bottom = 0.2
+margin_right = 40.0
+margin_bottom = 64.0
+text = "{Name}"
+
+[node name="author_lbl" type="Label" parent="PanelContainer/VBoxContainer/SongInfo/name_lbl"]
+unique_name_in_owner = true
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+margin_left = 10.0
+margin_top = -16.0
+margin_right = 140.0
+margin_bottom = 16.0
+theme_type_variation = "SmallLabel"
+text = "{Author}"
+
+[node name="Length" type="Label" parent="PanelContainer/VBoxContainer/SongInfo"]
+anchor_left = 0.03
+anchor_top = 0.7
+anchor_right = 0.03
+anchor_bottom = 0.7
+theme_type_variation = "SmallLabel"
+text = "Length:"
+align = 2
+
+[node name="length_lbl" type="Label" parent="PanelContainer/VBoxContainer/SongInfo"]
+unique_name_in_owner = true
+anchor_left = 0.03
+anchor_top = 0.7
+anchor_right = 0.03
+anchor_bottom = 0.7
+margin_right = 311.0
+margin_bottom = 32.0
+theme_type_variation = "SmallLabel"
+text = "{length}"
+align = 2
+
+[node name="BPM" type="Label" parent="PanelContainer/VBoxContainer/SongInfo"]
+anchor_left = 0.34
+anchor_top = 0.7
+anchor_right = 0.34
+anchor_bottom = 0.7
+theme_type_variation = "SmallLabel"
+text = "BPM:"
+
+[node name="bpm_lbl" type="Label" parent="PanelContainer/VBoxContainer/SongInfo"]
+unique_name_in_owner = true
+anchor_left = 0.34
+anchor_top = 0.7
+anchor_right = 0.34
+anchor_bottom = 0.7
+margin_right = 202.0
+margin_bottom = 32.0
+theme_type_variation = "SmallLabel"
+text = "{bpm)"
+align = 2
+
+[node name="Scores" type="Control" parent="PanelContainer/VBoxContainer"]
+margin_top = 154.0
+margin_right = 1056.0
+margin_bottom = 654.0
+rect_min_size = Vector2( 0, 500 )
+
+[node name="scroll" type="ScrollContainer" parent="PanelContainer/VBoxContainer"]
+margin_top = 658.0
+margin_right = 1056.0
+margin_bottom = 874.0
+rect_min_size = Vector2( 1056, 216 )
+
+[node name="difficulty_list" type="HBoxContainer" parent="PanelContainer/VBoxContainer/scroll"]
+unique_name_in_owner = true
+margin_right = 1056.0
+margin_bottom = 216.0
+rect_min_size = Vector2( 1056, 216 )
+size_flags_vertical = 4
+alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchor_left = 0.65
+anchor_right = 0.95
+anchor_bottom = 1.0
+scroll_horizontal_enabled = false
+
+[node name="level_list" type="VBoxContainer" parent="ScrollContainer"]
+unique_name_in_owner = true
+margin_right = 576.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 576, 1080 )
+alignment = 1
+
+[node name="Button" type="Button" parent="."]
+anchor_left = 0.01
+anchor_top = 0.016
+anchor_right = 0.01
+anchor_bottom = 0.016
+margin_right = 40.0
+margin_bottom = 94.0
+text = "<-"
+
+[connection signal="pressed" from="Button" to="." method="back"]

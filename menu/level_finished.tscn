@@ -1,0 +1,84 @@
+[gd_scene load_steps=2 format=2]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Control
+
+
+var level_select : PackedScene = preload(\"res://menu/level_select.tscn\")
+
+
+func _ready() -> void:
+	$scorelbl.text = String(LevelController.score)
+	pass
+
+
+func restart() -> void:
+	LevelController.play_level()
+	queue_free()
+
+
+func back() -> void:
+	get_parent().add_child(level_select.instance())
+	queue_free()
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(\"ui_cancel\"):
+		back()
+	elif event.is_action_pressed(\"ui_accept\"):
+		restart()
+"
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = SubResource( 1 )
+
+[node name="Finished" type="Label" parent="."]
+anchor_right = 1.0
+anchor_bottom = 0.2
+theme_type_variation = "BigLabel"
+text = "Level Finished!"
+align = 1
+valign = 1
+
+[node name="score" type="Label" parent="."]
+anchor_left = 0.1
+anchor_top = 0.2
+anchor_right = 0.1
+anchor_bottom = 0.3
+text = "Score:"
+align = 1
+valign = 1
+
+[node name="scorelbl" type="Label" parent="."]
+anchor_left = 0.1
+anchor_top = 0.2
+anchor_right = 0.1
+anchor_bottom = 0.3
+margin_left = 250.0
+margin_right = 275.0
+align = 1
+valign = 1
+
+[node name="Restart" type="Button" parent="."]
+anchor_left = 0.93
+anchor_top = 0.9
+anchor_right = 0.93
+anchor_bottom = 0.9
+margin_left = -309.0
+margin_top = -94.0
+grow_horizontal = 0
+text = "Restart"
+
+[node name="Continue" type="Button" parent="."]
+anchor_left = 0.07
+anchor_top = 0.9
+anchor_right = 0.07
+anchor_bottom = 0.9
+margin_top = -94.0
+margin_right = 350.0
+text = "Continue"
+
+[connection signal="pressed" from="Restart" to="." method="restart"]
+[connection signal="pressed" from="Continue" to="." method="back"]
