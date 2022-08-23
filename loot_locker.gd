@@ -83,7 +83,6 @@ func _get_user_name() -> void:
 
 func _on_get_user_name_request_completed(result, response_code, headers, body) -> void:
 	var json = JSON.parse(body.get_string_from_utf8())
-	print_debug(body.get_string_from_utf8())
 	user_name = json.result.name
 	get_name_http.queue_free()
 	# Inform the game that we got a user name back
@@ -168,7 +167,6 @@ func _get_leaderboard(level : String, difficulty : String, start : int, count : 
 	var url := "https://api.lootlocker.io/game/leaderboards/"+leaderboard_id+"/list?count="+str(count)+"&after="+str(start)
 	var headers = ["Content-Type: application/json", "x-session-token:"+session_token]
 	
-	print_debug(var2str(url))
 	# Create a request node for getting the leaderboard data
 	get_leaderboard_http = HTTPRequest.new()
 	add_child(get_leaderboard_http)
