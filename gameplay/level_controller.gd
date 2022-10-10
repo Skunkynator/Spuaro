@@ -14,9 +14,12 @@ var left_bh := preload("res://gameplay/black_hole_left.tscn").instance() as Spaw
 var right_bh := preload("res://gameplay/black_hole_right.tscn").instance() as Spawner
 var game_ui : Control = preload("res://gameplay/game_ui.tscn").instance()
 var finish_screen : PackedScene = preload("res://menu/level_finished.tscn")
+var request : LLRequest
 
 
 func _ready() -> void:
+	request = LLRequest.new()
+	add_child(request)
 	player = AudioStreamPlayer.new()
 	add_child(player)
 	var background : PackedScene = load("res://background.tscn")
@@ -77,7 +80,7 @@ func play_level(audio : AudioStream = null) -> void:
 		yield(right_bh,"did_finish")
 	var tween := create_tween()
 	tween.tween_property(player,"volume_db",-50.0,4).set_trans(Tween.TRANS_EXPO)
-	LootLocker.upload_score(lvl_name,lvl_diff,score)
+	request.upload_score(lvl_name,lvl_diff,score)
 	yield(get_tree().create_timer(4),"timeout")
 	finish_level()
 
